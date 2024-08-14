@@ -10,8 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 //Criando a tabela Usuario
-@Getter @Setter @NoArgsConstructor @ToString
-@Entity
+@Getter @Setter @NoArgsConstructor @ToString @Entity
 @Table(name = "usuarios")
 public class Usuario implements Serializable{
     //Aqui eu estou gerando o campo ID

@@ -1,5 +1,7 @@
 package com.valerio.demo_park_api.web.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.valerio.demo_park_api.entity.Usuario;
 import com.valerio.demo_park_api.service.UsuarioService;
+import com.valerio.demo_park_api.web.dto.UsuarioCreateDto;
+import com.valerio.demo_park_api.web.dto.UsuarioResponseDto;
+import com.valerio.demo_park_api.web.dto.mapper.UsuarioMapper;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -23,9 +29,9 @@ public class UsuarioController {
     @PostMapping
     //Criando a funcionalidade do POST
     //ResponseEntity encapsula a resposta num objeto JSON
-    public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) {
-        Usuario user = usuarioService.salvar(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    public ResponseEntity<UsuarioResponseDto> create(@RequestBody UsuarioCreateDto createDto) {
+        Usuario user = usuarioService.salvar(UsuarioMapper.toUsuario(createDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioMapper.toDto(user));
     }
 
     @GetMapping("/{id}")
@@ -43,5 +49,13 @@ public class UsuarioController {
         //Uso do parâmetro "@RequestBody Usuario usuario" pois a senha irá no corpo da requisição ao invés da url
         Usuario user = usuarioService.editarSenha(id, usuario.getPassword());
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping
+    //Criando a funcionalidade da LISTAGEM DE TODOS USUÁRIOS
+    //O cliente acessa a funcionalidade usando apenas o GET sem especificar o user
+    public ResponseEntity<List<Usuario>> getAll() {
+        List<Usuario> users = usuarioService.buscarTodos();
+        return ResponseEntity.ok(users);
     }
 }

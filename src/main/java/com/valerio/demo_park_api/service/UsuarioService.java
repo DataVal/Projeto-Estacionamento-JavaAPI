@@ -1,4 +1,6 @@
 package com.valerio.demo_park_api.service;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.valerio.demo_park_api.entity.Usuario;
@@ -29,5 +31,10 @@ public class UsuarioService {
         Usuario user = buscarPorId(id);
         user.setPassword(password);
         return user;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Usuario> buscarTodos() {
+        return usuarioRepository.findAll();
     }
 }

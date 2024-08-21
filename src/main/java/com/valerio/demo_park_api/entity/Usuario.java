@@ -26,7 +26,9 @@ public class Usuario implements Serializable{
     private String password;
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 25)
-    private Role role;
+    private Role role = Role.ROLE_CLIENTE;
+
+
     //Sistema de auditoria aplicado
     @Column(name = "data_criacao")
     private LocalDateTime dataCriacao;

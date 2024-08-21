@@ -46,10 +46,10 @@ public class UsuarioController {
     //PutMapping x PatchMapping ? Basicamente o Put faz uma atualização total em um objeto
     //Como queremos alterar apenas a propriedade SENHA usaremos nesse caso o Patch
     //Criando a funcionalidade semelhante ao do GET pois ele irá usar o id para identificar o user a ter a senha alterada
-    public ResponseEntity<UsuarioResponseDto> updatePassword(@PathVariable Long id, @RequestBody UsuarioSenhaDto dto) {
+    public ResponseEntity<Void> updatePassword(@PathVariable Long id, @RequestBody UsuarioSenhaDto dto) {
         //Uso do parâmetro "@RequestBody Usuario usuario" pois a senha irá no corpo da requisição ao invés da url
         Usuario user = usuarioService.editarSenha(id, dto.getSenhaAtual(), dto.getNovaSenha(), dto.getConfirmaSenha());
-        return ResponseEntity.ok(UsuarioMapper.toDto(user));
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping

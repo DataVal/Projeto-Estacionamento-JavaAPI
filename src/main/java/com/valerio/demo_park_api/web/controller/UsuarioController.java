@@ -15,6 +15,7 @@ import com.valerio.demo_park_api.entity.Usuario;
 import com.valerio.demo_park_api.service.UsuarioService;
 import com.valerio.demo_park_api.web.dto.UsuarioCreateDto;
 import com.valerio.demo_park_api.web.dto.UsuarioResponseDto;
+import com.valerio.demo_park_api.web.dto.UsuarioSenhaDto;
 import com.valerio.demo_park_api.web.dto.mapper.UsuarioMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -36,19 +37,19 @@ public class UsuarioController {
 
     @GetMapping("/{id}")
     //Criando a funcionalidade do GET
-    public ResponseEntity<Usuario> getById(@PathVariable Long id) {
+    public ResponseEntity<UsuarioResponseDto> getById(@PathVariable Long id) {
         Usuario user = usuarioService.buscarPorId(id);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(UsuarioMapper.toDto(user));
     }
 
     @PatchMapping("/{id}")
     //PutMapping x PatchMapping ? Basicamente o Put faz uma atualização total em um objeto
     //Como queremos alterar apenas a propriedade SENHA usaremos nesse caso o Patch
     //Criando a funcionalidade semelhante ao do GET pois ele irá usar o id para identificar o user a ter a senha alterada
-    public ResponseEntity<Usuario> updatePassword(@PathVariable Long id, @RequestBody Usuario usuario) {
+    public ResponseEntity<UsuarioResponseDto> updatePassword(@PathVariable Long id, @RequestBody UsuarioSenhaDto dto) {
         //Uso do parâmetro "@RequestBody Usuario usuario" pois a senha irá no corpo da requisição ao invés da url
-        Usuario user = usuarioService.editarSenha(id, usuario.getPassword());
-        return ResponseEntity.ok(user);
+        Usuario user = usuarioService.editarSenha(id, dto.getSenhaAtual(), dto.getNovaSenha(), dto.getConfirmaSenha());
+        return ResponseEntity.ok(UsuarioMapper.toDto(user));
     }
 
     @GetMapping

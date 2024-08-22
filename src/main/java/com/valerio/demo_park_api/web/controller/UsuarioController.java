@@ -18,6 +18,7 @@ import com.valerio.demo_park_api.web.dto.UsuarioResponseDto;
 import com.valerio.demo_park_api.web.dto.UsuarioSenhaDto;
 import com.valerio.demo_park_api.web.dto.mapper.UsuarioMapper;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -30,7 +31,8 @@ public class UsuarioController {
     @PostMapping
     //Criando a funcionalidade do POST
     //ResponseEntity encapsula a resposta num objeto JSON
-    public ResponseEntity<UsuarioResponseDto> create(@RequestBody UsuarioCreateDto createDto) {
+    //Usando a notation @Valid eu estou informando ao controller que é necessário a validação
+    public ResponseEntity<UsuarioResponseDto> create(@Valid @RequestBody UsuarioCreateDto createDto) {
         Usuario user = usuarioService.salvar(UsuarioMapper.toUsuario(createDto));
         return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioMapper.toDto(user));
     }

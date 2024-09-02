@@ -27,4 +27,15 @@ public class ApiExceptionHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_ENTITY, "Campos inválidos", result));
     }
+
+    @ExceptionHandler(com.valerio.demo_park_api.exception.UsernameUniqueViolationException.class)
+    public ResponseEntity<ErrorMessage> UsernameUniqueViolationException(RuntimeException ex, 
+    HttpServletRequest request){
+
+        log.error("Api Error -", ex);
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.CONFLICT, ex.getMessage()));
+    }
 }

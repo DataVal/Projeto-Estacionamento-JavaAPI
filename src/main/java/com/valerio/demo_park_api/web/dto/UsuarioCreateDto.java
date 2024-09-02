@@ -13,7 +13,7 @@ import lombok.ToString;
 public class UsuarioCreateDto {
 
     @NotBlank
-    @Email(message = "Email informado é invalido", regexp = "^[a-z0-9.+-]+@[a-z0-9.-]+\\\\.[a-z]{2,}$")
+    @Email(message = "Email informado é invalido", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
     private String username;
     @NotBlank
     @Size(min = 6,max = 6) //Campo senha deverá sempre ter 6 caracters

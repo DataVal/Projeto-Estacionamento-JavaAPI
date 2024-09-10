@@ -9,6 +9,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.valerio.demo_park_api.web.dto.UsuarioCreateDto;
 import com.valerio.demo_park_api.web.dto.UsuarioResponseDto;
+import com.valerio.demo_park_api.web.dto.UsuarioSenhaDto;
 import com.valerio.demo_park_api.web.exception.ErrorMessage;
 
 // IT significa teste de integração, mesmo o objetivo sendo fazer um teste ponta-a-ponta ele é considerado IT
@@ -141,5 +142,119 @@ public class UsuarioIT {
 
     }
 
+    @Test
+    public void createUsuario_ComUsernameRepetido_RetornarErrorMessage409(){
+        ErrorMessage responseBody = testClient
+            .post()
+            .uri("api/v1/usuarios")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new UsuarioCreateDto("jpvc@gmail.com","555555"))
+            .exchange()
+            .expectStatus().isEqualTo(409)
+            .expectBody(ErrorMessage.class)
+            .returnResult().getResponseBody();
 
+        
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(409);
+
+    }
+
+    @Test
+    public void buscarUsuario_ComIdInexistente_RetornarErrorMessageComStatus404(){
+        ErrorMessage responseBody = testClient
+            .get()
+            .uri("api/v1/usuarios/0")
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorMessage.class)
+            .returnResult().getResponseBody();
+
+        
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+
+
+    }
+
+    @Test
+    public void alterarSenha_ComDadosValidos_RetornarStatus204(){
+        testClient
+            .patch()
+            .uri("api/v1/usuarios/100")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new UsuarioSenhaDto("111111","111113","111113"))
+            .exchange()
+            .expectStatus().isNoContent();
+        
+    }
+
+    @Test
+    public void EditarSenha_ComIdInexistente_RetornarErrorMessageComStatus404(){
+        ErrorMessage responseBody = testClient
+            .patch()
+            .uri("api/v1/usuarios/121")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new UsuarioSenhaDto("333222","111111","111111"))
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorMessage.class)
+            .returnResult().getResponseBody();
+        
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+
+
+    }
+
+    @Test
+    public void EditarSenha_ComCamposInvalidos_RetornarErrorMessageComStatus422(){
+        
+        ErrorMessage responseBody = testClient
+            .patch()
+            .uri("api/v1/usuarios/100")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new UsuarioSenhaDto("","",""))
+            .exchange()
+            .expectStatus().isEqualTo(422)
+            .expectBody(ErrorMessage.class)
+            .returnResult().getResponseBody();
+        
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+
+        responseBody = testClient
+            .patch()
+            .uri("api/v1/usuarios/100")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new UsuarioSenhaDto("12345","12345","12345"))
+            .exchange()
+            .expectStatus().isEqualTo(422)
+            .expectBody(ErrorMessage.class)
+            .returnResult().getResponseBody();
+        
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+
+        responseBody = testClient
+            .patch()
+            .uri("api/v1/usuarios/100")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new UsuarioSenhaDto("1234567","1234567","1234567"))
+            .exchange()
+            .expectStatus().isEqualTo(422)
+            .expectBody(ErrorMessage.class)
+            .returnResult().getResponseBody();
+        
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+
+
+    }
+
+    @Test
+    public void EditarSenha_ComSenhasInvalidas_RetornarErrorMessageComStatus400(){
+    //O PROBLEMA AQUI É QUE PARECE QUE NÃO EXISTE LOGICA PARA NOVASENHA E CONFIRMASENHA DIFERENTES
+    //ESTA CAUSANDO UM ERRO HTTP 500 INTERNAL_SERVER_ERROR
+    }
 }

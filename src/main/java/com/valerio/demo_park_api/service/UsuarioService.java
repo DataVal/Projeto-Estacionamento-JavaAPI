@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.valerio.demo_park_api.entity.Usuario;
 import com.valerio.demo_park_api.exception.EntityNotFoundException;
+import com.valerio.demo_park_api.exception.PasswordInvalidException;
 import com.valerio.demo_park_api.exception.UsernameUniqueViolationException;
 import com.valerio.demo_park_api.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,11 +38,11 @@ public class UsuarioService {
     @Transactional
     public Usuario editarSenha(Long id, String senhaAtual, String novaSenha, String confirmaSenha) {
         if (!novaSenha.equals(confirmaSenha)) {
-            throw new RuntimeException("Nova senha não conferiu com a confirmação!");
+            throw new PasswordInvalidException("Nova senha não conferiu com a confirmação!");
         }
         Usuario user = buscarPorId(id);
         if (!user.getPassword().equals(senhaAtual)) {
-            throw new RuntimeException("Senha atual não confere.");
+            throw new PasswordInvalidException("Senha atual não confere.");
         }
         user.setPassword(novaSenha);
         return user;
@@ -51,4 +52,5 @@ public class UsuarioService {
     public List<Usuario> buscarTodos() {
         return usuarioRepository.findAll();
     }
+
 }

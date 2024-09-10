@@ -18,6 +18,7 @@ import com.valerio.demo_park_api.web.dto.UsuarioSenhaDto;
 import com.valerio.demo_park_api.web.dto.mapper.UsuarioMapper;
 import com.valerio.demo_park_api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -85,24 +86,26 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),    
             @ApiResponse(responseCode = "422", description = "Campos inválidos ou mal formatados",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))     
+                content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))     
         
             }
     )
 
     @PatchMapping("/{id}")
-    //PutMapping x PatchMapping ? Basicamente o Put faz uma atualização total em um objeto
-    //Como queremos alterar apenas a propriedade SENHA usaremos nesse caso o Patch
-    //Criando a funcionalidade semelhante ao do GET pois ele irá usar o id para identificar o user a ter a senha alterada
     public ResponseEntity<Void> updatePassword(@PathVariable Long id, @Valid @RequestBody UsuarioSenhaDto dto) {
-        //Uso do parâmetro "@RequestBody Usuario usuario" pois a senha irá no corpo da requisição ao invés da url
         Usuario user = usuarioService.editarSenha(id, dto.getSenhaAtual(), dto.getNovaSenha(), dto.getConfirmaSenha());
         return ResponseEntity.noContent().build();
     }
 
+
+    @Operation(summary = "Listar todos os usuários", description = "Listar todos os usuários cadastrados",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Lista com todos os usuários cadastrados",
+                            content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = UsuarioResponseDto.class))))
+            })
+            
     @GetMapping
-    //Criando a funcionalidade da LISTAGEM DE TODOS USUÁRIOS
-    //O cliente acessa a funcionalidade usando apenas o GET sem especificar o user
     public ResponseEntity<List<UsuarioResponseDto>> getAll() {
         List<Usuario> users = usuarioService.buscarTodos();
         return ResponseEntity.ok(UsuarioMapper.toListDto(users));

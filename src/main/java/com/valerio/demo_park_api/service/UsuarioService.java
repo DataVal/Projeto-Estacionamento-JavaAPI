@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.valerio.demo_park_api.entity.Usuario;
+import com.valerio.demo_park_api.entity.Usuario.Role;
 import com.valerio.demo_park_api.exception.EntityNotFoundException;
 import com.valerio.demo_park_api.exception.PasswordInvalidException;
 import com.valerio.demo_park_api.exception.UsernameUniqueViolationException;
@@ -51,6 +52,18 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public List<Usuario> buscarTodos() {
         return usuarioRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Usuario buscarPorUsername(String username) {
+        return usuarioRepository.findByUsername(username).orElseThrow(
+            () -> new EntityNotFoundException(String.format("Usuário com username '%s' não encontrado", username))
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public Role buscarRolePorUsername(String username) {
+        return usuarioRepository.findRoleByUsername(username);
     }
 
 }

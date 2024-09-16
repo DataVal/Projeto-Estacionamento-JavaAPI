@@ -14,11 +14,12 @@ import lombok.ToString;
 @NoArgsConstructor 
 @AllArgsConstructor 
 @ToString
-public class UsuarioCreateDto {
+public class UsuarioLoginDto {
 
     @NotBlank
     @Email(message = "Email informado é invalido", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
     private String username;
+
     @NotBlank
     @Size(min = 6,max = 6) //Campo senha deverá sempre ter 6 caracters
     private String password;

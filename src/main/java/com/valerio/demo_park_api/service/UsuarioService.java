@@ -1,7 +1,10 @@
 package com.valerio.demo_park_api.service;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.valerio.demo_park_api.entity.Usuario;
@@ -17,13 +20,14 @@ import lombok.RequiredArgsConstructor;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
     //essa notação significa que o Spring vai cuidar de abrir, gerenciar e fechar a transação
     @Transactional
     public Usuario salvar(Usuario usuario){
         try {
+            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
             return usuarioRepository.save(usuario);
-
         } catch (DataIntegrityViolationException ex) {
             throw new UsernameUniqueViolationException(String.format("Username {%s} já cadastrado", usuario.getUsername()));
         }
@@ -42,10 +46,10 @@ public class UsuarioService {
             throw new PasswordInvalidException("Nova senha não conferiu com a confirmação!");
         }
         Usuario user = buscarPorId(id);
-        if (!user.getPassword().equals(senhaAtual)) {
+        if (!passwordEncoder.matches(senhaAtual, user.getPassword())) {
             throw new PasswordInvalidException("Senha atual não confere.");
         }
-        user.setPassword(novaSenha);
+        user.setPassword(passwordEncoder.encode(novaSenha));
         return user;
     }
 

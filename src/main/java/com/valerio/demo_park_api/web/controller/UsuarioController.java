@@ -3,6 +3,7 @@ package com.valerio.demo_park_api.web.controller;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -68,6 +69,7 @@ public class UsuarioController {
     )
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     //Criando a funcionalidade do GET
     public ResponseEntity<UsuarioResponseDto> getById(@PathVariable Long id) {
         Usuario user = usuarioService.buscarPorId(id);

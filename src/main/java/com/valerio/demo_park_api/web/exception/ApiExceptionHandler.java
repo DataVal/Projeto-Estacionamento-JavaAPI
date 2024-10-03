@@ -3,6 +3,7 @@ package com.valerio.demo_park_api.web.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -40,7 +41,7 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(com.valerio.demo_park_api.exception.UsernameUniqueViolationException.class)
-    public ResponseEntity<ErrorMessage> UsernameUniqueViolationException(RuntimeException ex, 
+    public ResponseEntity<ErrorMessage> usernameUniqueViolationException(RuntimeException ex, 
     HttpServletRequest request){
 
         log.error("Api Error -", ex);
@@ -50,8 +51,20 @@ public class ApiExceptionHandler {
                 .body(new ErrorMessage(request, HttpStatus.CONFLICT, ex.getMessage()));
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorMessage> accessDeniedException(AccessDeniedException ex, 
+    HttpServletRequest request){
+
+        log.error("Api Error -", ex);
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.FORBIDDEN, ex.getMessage()));
+    }
+
+
     @ExceptionHandler(com.valerio.demo_park_api.exception.EntityNotFoundException.class)
-    public ResponseEntity<ErrorMessage> EntityNotFoundException(RuntimeException ex, 
+    public ResponseEntity<ErrorMessage> entityNotFoundException(RuntimeException ex, 
     HttpServletRequest request){
 
         log.error("Api Error -", ex);

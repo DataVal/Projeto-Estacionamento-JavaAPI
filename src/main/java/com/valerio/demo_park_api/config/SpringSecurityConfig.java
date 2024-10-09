@@ -28,10 +28,18 @@ public class SpringSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "api/v1/usuarios").permitAll()
-                        .requestMatchers(HttpMethod.POST, "api/v1/auth").permitAll()
-                        .anyRequest().authenticated()
+                    //rotas autorizadas
+                    .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/auth").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/estacionamento.html").permitAll() // Alterado para GET
+                    .requestMatchers(HttpMethod.GET, "/estacionamento/**").permitAll() // Alterado para GET
+                    .requestMatchers(HttpMethod.GET, "/swagger-ui.html").permitAll() // Alterado para GET
+                    .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll() // Alterado para GET
+                    .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll() // Adicionado
+                    .requestMatchers(HttpMethod.GET, "/swagger-resources/**").permitAll() // Adicionado
+                    .requestMatchers(HttpMethod.GET, "/webjars/**").permitAll() // Adicionado
+                    .anyRequest().authenticated()
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 ).addFilterBefore(
